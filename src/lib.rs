@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use std::sync::mpsc;
+use std::thread;
 
 pub enum FileEvent {
     Create(PathBuf),
@@ -28,6 +29,18 @@ impl Watcher {
     }
 
     pub fn watch_for_changes(&self) -> mpsc::Receiver<FileEvent> {
-        todo!()
+        let mut watcher = Watcher::new(".".into());
+
+        let (sender, receiver) = mpsc::channel();
+
+        let _t = thread::spawn(move || {
+            let fsevent = fsevent::FsEvent::new(vec![".".to_string()]);
+            fsevent.observe(sender);
+        });
+
+        loop {
+            let val = receiver.recv();
+            println!("{:?}", val.unwrap());
+        }
     }
 }
