@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use std::sync::mpsc;
 use std::thread;
 
+
 pub enum FileEvent {
     Create(PathBuf),
     Remove(PathBuf),
@@ -40,7 +41,10 @@ impl Watcher {
 
         loop {
             let val = receiver.recv();
-            println!("{:?}", val.unwrap());
+            //println!("{:?}", val.unwrap());
+            if val.unwrap().flag.contains(fsevent::StreamFlags::ITEM_CREATED){
+                println!("Item Created");
+            }
         }
     }
 }
