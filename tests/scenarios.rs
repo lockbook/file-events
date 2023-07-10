@@ -1,14 +1,17 @@
-use std::{path::PathBuf, fs};
+use std::{path::PathBuf, fs, time::Duration, thread};
 
-use file_events::Watcher;
+use file_events::{Watcher, FileEvent};
 
 #[test]
 fn create_test() {
-    let watcher = Watcher::new(PathBuf::default());
+    let watcher = Watcher::new(PathBuf::from("."));
     let x = watcher.watch_for_changes();
-    let mut dest = "./new_file";
+    let dest = "./new_file";
     fs::File::create(&dest).unwrap();
     println!("{:?}", x);
-    assert_eq!(dest, "diff");
+    //thread::sleep(Duration::from_millis(1500));
+    let evt = x.recv().unwrap();
+    assert_eq!(evt, FileEvent::Create("./new_file".into()));
+    
 }
 
