@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 fsevent = "2.1.2"
+
+[dev-dependencies]
+uuid = { version = "1.2.2", features = ["v4", "serde"] }
