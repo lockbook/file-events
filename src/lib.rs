@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
-use std::ops::Deref;
-use std::path::{Path, PathBuf};
+
+
+use std::path::{PathBuf};
 use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
