@@ -54,7 +54,7 @@ fn rename_test() {
 }
 
 #[test]
-fn move_out_test(){
+fn move_out_test() {
     let dest = create_dir();
     let mut newfile = dest.clone();
     newfile.push("new_file");
@@ -70,7 +70,7 @@ fn move_out_test(){
 }
 
 #[test]
-fn double_test(){
+fn double_test() {
     let dest = create_dir();
     let mut newfile = dest.clone();
     newfile.push("new_file");
