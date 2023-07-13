@@ -68,3 +68,27 @@ fn move_out_test(){
     fs::remove_dir_all(dest).unwrap();
     fs::remove_file(newfile2).unwrap();
 }
+
+#[test]
+fn double_test(){
+    let dest = create_dir();
+    let mut newfile = dest.clone();
+    newfile.push("new_file");
+    let mut anotherfile = dest.clone();
+    anotherfile.push("another_file");
+    let newfile2 = PathBuf::from("./new_file");
+    let anotherfile2 = PathBuf::from("./another_file");
+    fs::File::create(&newfile).unwrap();
+    fs::File::create(&anotherfile).unwrap();
+    let watcher = Watcher::new(dest.clone());
+    let x = watcher.watch_for_changes();
+    fs::rename(&newfile, &newfile2).unwrap();
+    fs::rename(&anotherfile, &anotherfile2).unwrap();
+    let evt = x.recv().unwrap();
+    let evt2 = x.recv().unwrap();
+    assert_eq!(evt, FileEvent::MoveOut(newfile));
+    assert_eq!(evt2, FileEvent::MoveOut(anotherfile));
+    fs::remove_dir_all(dest).unwrap();
+    fs::remove_file(newfile2).unwrap();
+    fs::remove_file(anotherfile2).unwrap();
+}
