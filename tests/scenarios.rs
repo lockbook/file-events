@@ -52,3 +52,19 @@ fn rename_test() {
     assert_eq!(evt, FileEvent::Rename(newfile, newfile2));
     fs::remove_dir_all(dest).unwrap();
 }
+
+#[test]
+fn move_out_test(){
+    let dest = create_dir();
+    let mut newfile = dest.clone();
+    newfile.push("new_file");
+    let newfile2 = PathBuf::from("./new_file");
+    fs::File::create(&newfile).unwrap();
+    let watcher = Watcher::new(dest.clone());
+    let x = watcher.watch_for_changes();
+    fs::rename(&newfile, &newfile2).unwrap();
+    let evt = x.recv().unwrap();
+    assert_eq!(evt, FileEvent::MoveOut(newfile));
+    fs::remove_dir_all(dest).unwrap();
+    fs::remove_file(newfile2).unwrap();
+}
