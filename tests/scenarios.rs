@@ -92,3 +92,49 @@ fn double_test() {
     fs::remove_file(newfile2).unwrap();
     fs::remove_file(anotherfile2).unwrap();
 }
+
+#[test]
+fn move_within_test() {
+    let dest = create_dir();
+    let mut newfolder = dest.clone();
+    newfolder.push("new_folder/");
+    let mut newfolder2 = dest.clone();
+    newfolder2.push("new_folder_2/");
+    fs::create_dir(&newfolder).unwrap();
+    fs::create_dir(&newfolder2).unwrap();
+    thread::sleep(Duration::from_millis(100));
+    let mut newfile = newfolder.clone();
+    newfile.push("new_file");
+    let mut newfile2 = newfolder2.clone();
+    newfile2.push("new_file");
+    fs::File::create(&newfile).unwrap();
+    let watcher = Watcher::new(dest.clone());
+    let x = watcher.watch_for_changes();
+    fs::rename(&newfile, &newfile2).unwrap();
+    let evt = x.recv().unwrap();
+    assert_eq!(evt, FileEvent::MoveWithin(newfile, newfile2));
+    fs::remove_dir_all(dest).unwrap();
+}
+
+#[test]
+fn move_and_rename_test() {
+    let dest = create_dir();
+    let mut newfolder = dest.clone();
+    newfolder.push("new_folder/");
+    let mut newfolder2 = dest.clone();
+    newfolder2.push("new_folder_2/");
+    fs::create_dir(&newfolder).unwrap();
+    fs::create_dir(&newfolder2).unwrap();
+    thread::sleep(Duration::from_millis(100));
+    let mut newfile = newfolder.clone();
+    newfile.push("new_file");
+    let mut newfile2 = newfolder2.clone();
+    newfile2.push("new_file_2");
+    fs::File::create(&newfile).unwrap();
+    let watcher = Watcher::new(dest.clone());
+    let x = watcher.watch_for_changes();
+    fs::rename(&newfile, &newfile2).unwrap();
+    let evt = x.recv().unwrap();
+    assert_eq!(evt, FileEvent::MoveAndRename(newfile, newfile2));
+    fs::remove_dir_all(dest).unwrap();
+}

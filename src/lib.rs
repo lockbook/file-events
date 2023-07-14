@@ -14,6 +14,7 @@ pub enum FileEvent {
     MoveWithin(PathBuf, PathBuf),
     MoveOut(PathBuf),
     Modify(PathBuf),
+    MoveAndRename(PathBuf, PathBuf)
 }
 
 pub struct RenameState {
@@ -70,7 +71,16 @@ impl Watcher {
                 let mut rename_candidate = self.rename_candidate.lock().unwrap();
                 if let Some(pending) = rename_candidate.take() {
                     if pending.id == val.event_id - 1 {
-                        tx.send(FileEvent::Rename(pending.path, location)).unwrap();
+                        println!("here");
+                        if compare_first_parts(pending.path.clone(), location.clone()){
+                            println!("{:?}", pending.path);
+                            tx.send(FileEvent::Rename(pending.path, location)).unwrap();
+                        } else if compare_last_parts(pending.path.clone(), location.clone()){
+                            tx.send(FileEvent::MoveWithin(pending.path, location)).unwrap();
+                        }
+                        else {
+                            tx.send(FileEvent::MoveAndRename(pending.path, location)).unwrap();
+                        }
                     } else {
                         tx.send(FileEvent::MoveOut(pending.path)).unwrap();
                         tx.send(FileEvent::MoveOut(location)).unwrap();
@@ -96,4 +106,12 @@ impl Watcher {
             }
         }
     }
+}
+
+fn compare_last_parts(path1: PathBuf, path2: PathBuf) -> bool {
+    return path1.into_iter().last() == path2.into_iter().last()
+}
+
+fn compare_first_parts(path1: PathBuf, path2: PathBuf) -> bool {
+    return path1.parent() == path2.parent()
 }
