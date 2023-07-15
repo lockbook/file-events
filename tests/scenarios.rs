@@ -1,6 +1,5 @@
-use std::{fs, path::PathBuf, thread, time::Duration};
-
 use file_events::{FileEvent, Watcher};
+use std::{fs, path::PathBuf, thread, time::Duration};
 
 fn create_dir() -> PathBuf {
     let path = uuid::Uuid::new_v4();
