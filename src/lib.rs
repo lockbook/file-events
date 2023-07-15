@@ -13,7 +13,7 @@ pub enum FileEvent {
     Rename(PathBuf, PathBuf),
     MoveWithin(PathBuf, PathBuf),
     MoveOut(PathBuf),
-    Modify(PathBuf),
+    Write(PathBuf),
     MoveAndRename(PathBuf, PathBuf),
 }
 
@@ -103,7 +103,7 @@ impl Watcher {
             } else if flags.contains(StreamFlags::INODE_META_MOD)
                 || flags.contains(StreamFlags::ITEM_MODIFIED)
             {
-                tx.send(FileEvent::Modify(location)).unwrap();
+                tx.send(FileEvent::Write(location)).unwrap();
             }
         }
     }
