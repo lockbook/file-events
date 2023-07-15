@@ -72,10 +72,10 @@ fn move_out_test() {
 fn double_test() {
     let dest = create_dir();
     let mut newfile = dest.clone();
-    newfile.push("new_file");
+    newfile.push("file");
     let mut anotherfile = dest.clone();
     anotherfile.push("another_file");
-    let newfile2 = PathBuf::from("./new_file");
+    let newfile2 = PathBuf::from("./file");
     let anotherfile2 = PathBuf::from("./another_file");
     fs::File::create(&newfile).unwrap();
     fs::File::create(&anotherfile).unwrap();

@@ -5,6 +5,8 @@ use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
+use crate::FileEvent;
+
 struct RenameState {
     path: PathBuf,
     id: u64,
