@@ -47,7 +47,6 @@ impl Watcher {
     fn event_loop(&self, fsevent_rx: Receiver<Event>, tx: Sender<FileEvent>) {
         loop {
             let val = fsevent_rx.recv().unwrap();
-            println!("{:?}", &val);
             let location = PathBuf::from(&val.path);
             let flags = &val.flag;
             if flags.contains(StreamFlags::ITEM_CREATED)
@@ -61,9 +60,7 @@ impl Watcher {
                 let mut rename_candidate = self.rename_candidate.lock().unwrap();
                 if let Some(pending) = rename_candidate.take() {
                     if pending.id == val.event_id - 1 {
-                        println!("here");
                         if compare_first_parts(pending.path.clone(), location.clone()) {
-                            println!("{:?}", pending.path);
                             tx.send(FileEvent::Rename(pending.path, location)).unwrap();
                         } else if compare_last_parts(pending.path.clone(), location.clone()) {
                             tx.send(FileEvent::MoveWithin(pending.path, location))
